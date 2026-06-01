@@ -31,10 +31,6 @@ export type Guide = {
   quickLinks: QuickLink[];
 };
 
-function step(text: string): GuideStep {
-  return { text };
-}
-
 export const guides: Guide[] = [
   {
     slug: "blacklist",
