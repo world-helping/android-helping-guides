@@ -1,8 +1,41 @@
-export type QuickLink = {
+export type AppQuickLink = {
   label: string;
   href: string;
   hint?: string;
 };
+
+export type OpenContactsQuickLink = {
+  kind: "openContacts";
+  hint?: string;
+};
+
+export type OpenSmsQuickLink = {
+  kind: "openSms";
+  hint?: string;
+};
+
+export type NewSmsQuickLink = {
+  kind: "newSms";
+  hint?: string;
+};
+
+export type OpenCameraQuickLink = {
+  kind: "openCamera";
+  hint?: string;
+};
+
+export type OpenGalleryQuickLink = {
+  kind: "openGallery";
+  hint?: string;
+};
+
+export type QuickLink =
+  | AppQuickLink
+  | OpenContactsQuickLink
+  | OpenSmsQuickLink
+  | NewSmsQuickLink
+  | OpenCameraQuickLink
+  | OpenGalleryQuickLink;
 
 export type StepImage = {
   src: string;
@@ -30,6 +63,9 @@ export type Guide = {
   tips?: string[];
   quickLinks: QuickLink[];
 };
+
+const createContactHref =
+  "intent://#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/raw_contact;end";
 
 export const guides: Guide[] = [
   {
@@ -89,11 +125,6 @@ export const guides: Guide[] = [
         href: "tel:",
         hint: "Откроется приложение «Телефон». Дальше — шаги выше.",
       },
-      {
-        label: "Настройки телефона",
-        href: "intent:#Intent;action=android.settings.APPLICATION_SETTINGS;end",
-        hint: "Если ссылка не сработала, откройте «Настройки» вручную (значок шестерёнки).",
-      },
     ],
   },
   {
@@ -149,13 +180,11 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть камеру",
-        href: "intent://media/action/IMAGE_CAPTURE#Intent;scheme=android-app;end",
-        hint: "Работает в браузере Chrome на Android. Иначе откройте «Камера» с главного экрана.",
+        kind: "openCamera",
+        hint: "Откроется приложение «Камера». Если не открылось — найдите «Камера» на главном экране.",
       },
       {
-        label: "Открыть галерею",
-        href: "intent://media/action/VIEW#Intent;type=image/*;scheme=content;end",
+        kind: "openGallery",
         hint: "Просмотр уже сделанных снимков.",
       },
     ],
@@ -171,7 +200,7 @@ export const guides: Guide[] = [
         textLinks: [
           {
             match: "«Галерея»",
-            href: "intent://media/action/VIEW#Intent;type=image/*;scheme=content;end",
+            href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_GALLERY;end",
           },
         ],
         image: {
@@ -219,13 +248,11 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть галерею",
-        href: "intent://media/action/VIEW#Intent;type=image/*;scheme=content;end",
+        kind: "openGallery",
         hint: "Выберите фото, затем «Поделиться».",
       },
       {
-        label: "Открыть SMS / сообщения",
-        href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MESSAGING;end",
+        kind: "openSms",
         hint: "Если не открылось — найдите приложение «Сообщения» на главном экране.",
       },
     ],
@@ -300,6 +327,10 @@ export const guides: Guide[] = [
         label: "Tele2 — *105#",
         href: "tel:%2A105%23",
       },
+      {
+        kind: "openSms",
+        hint: "Если ответ пришёл SMS — откройте входящие сообщения.",
+      },
     ],
   },
   {
@@ -355,13 +386,12 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть контакты",
-        href: "intent:#Intent;action=android.intent.action.VIEW;type=vnd.android.cursor.dir/contact;end",
+        kind: "openContacts",
         hint: "Если не открылось — найдите приложение «Контакты» на главном экране.",
       },
       {
         label: "Создать новый контакт",
-        href: "intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;end",
+        href: createContactHref,
         hint: "Сразу откроется форма нового контакта на многих телефонах.",
       },
     ],
@@ -419,8 +449,7 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть контакты",
-        href: "intent:#Intent;action=android.intent.action.VIEW;type=vnd.android.cursor.dir/contact;end",
+        kind: "openContacts",
         hint: "Дальше найдите контакт и удалите по шагам выше.",
       },
     ],
@@ -478,13 +507,11 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть контакты",
-        href: "intent:#Intent;action=android.intent.action.VIEW;type=vnd.android.cursor.dir/contact;end",
+        kind: "openContacts",
         hint: "Выберите контакт → «Поделиться».",
       },
       {
-        label: "Открыть сообщения",
-        href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MESSAGING;end",
+        kind: "newSms",
         hint: "Если копировали номер — вставьте его в новое сообщение.",
       },
     ],
@@ -542,13 +569,11 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть сообщения (SMS)",
-        href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MESSAGING;end",
+        kind: "openSms",
         hint: "Если не открылось — найдите «Сообщения» на главном экране.",
       },
       {
-        label: "Новое SMS",
-        href: "intent:#Intent;action=android.intent.action.SENDTO;data=sms:;end",
+        kind: "newSms",
         hint: "Откроется создание нового сообщения.",
       },
     ],
@@ -606,8 +631,7 @@ export const guides: Guide[] = [
     ],
     quickLinks: [
       {
-        label: "Открыть сообщения",
-        href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MESSAGING;end",
+        kind: "openSms",
         hint: "Откроется список чатов с входящими SMS.",
       },
     ],

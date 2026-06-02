@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OpenCameraButton } from "@/components/OpenCameraButton";
+import { OpenContactsButton } from "@/components/OpenContactsButton";
+import { OpenGalleryButton } from "@/components/OpenGalleryButton";
+import { NewSmsButton, OpenSmsButton } from "@/components/OpenMessagesButton";
 import { QuickLinkButton } from "@/components/QuickLinkButton";
 import { StepList } from "@/components/StepList";
 import { getGuideBySlug, guides } from "@/lib/guides";
@@ -64,9 +68,30 @@ export default async function GuidePage({ params }: PageProps) {
           ничего не произошло, выполните шаги ниже вручную.
         </p>
         <div className="flex flex-col gap-4">
-          {guide.quickLinks.map((link) => (
-            <QuickLinkButton key={link.label + link.href} link={link} />
-          ))}
+          {guide.quickLinks.map((link, index) =>
+            "kind" in link && link.kind === "openContacts" ? (
+              <OpenContactsButton
+                key={`open-contacts-${index}`}
+                hint={link.hint}
+              />
+            ) : "kind" in link && link.kind === "openSms" ? (
+              <OpenSmsButton
+                key={`open-sms-${index}`}
+                hint={link.hint}
+              />
+            ) : "kind" in link && link.kind === "newSms" ? (
+              <NewSmsButton key={`new-sms-${index}`} hint={link.hint} />
+            ) : "kind" in link && link.kind === "openCamera" ? (
+              <OpenCameraButton key={`open-camera-${index}`} hint={link.hint} />
+            ) : "kind" in link && link.kind === "openGallery" ? (
+              <OpenGalleryButton
+                key={`open-gallery-${index}`}
+                hint={link.hint}
+              />
+            ) : (
+              <QuickLinkButton key={link.label + link.href} link={link} />
+            ),
+          )}
         </div>
       </section>
 

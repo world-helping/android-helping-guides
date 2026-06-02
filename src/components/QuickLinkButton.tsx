@@ -1,6 +1,6 @@
-import type { QuickLink } from "@/lib/guides";
+import type { AppQuickLink } from "@/lib/guides";
 
-export function QuickLinkButton({ link }: { link: QuickLink }) {
+export function QuickLinkButton({ link }: { link: AppQuickLink }) {
   return (
     <div className="rounded-xl border-2 border-[var(--border)] bg-[var(--card)] p-4">
       <a
