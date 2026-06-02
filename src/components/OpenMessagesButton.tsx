@@ -3,7 +3,7 @@ import type { AppQuickLink } from "@/lib/guides";
 
 const openSmsLink: AppQuickLink = {
   label: "Открыть сообщения (SMS)",
-  href: "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MESSAGING;end",
+  href: "sms:",
 };
 
 const newSmsLink: AppQuickLink = {

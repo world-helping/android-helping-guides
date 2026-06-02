@@ -3,7 +3,7 @@ import type { AppQuickLink } from "@/lib/guides";
 
 const openContactsLink: AppQuickLink = {
   label: "Открыть контакты",
-  href: "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_CONTACTS;end",
+  href: "intent://com.android.contacts/contacts#Intent;scheme=content;action=android.intent.action.VIEW;type=vnd.android.cursor.dir/contact;end",
 };
 
 type OpenContactsButtonProps = {

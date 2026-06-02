@@ -58,6 +58,13 @@ export default function manifest(): MetadataRoute.Manifest {
         url: "/guides/read-messages",
         icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
       },
+      {
+        name: "Добавить контакт",
+        short_name: "Добавить контакт",
+        description: "Открыть инструкцию по добавлению контакта.",
+        url: "/guides/add-contact",
+        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
+      },
     ],
   };
 }

@@ -27,6 +27,7 @@ export type OpenCameraQuickLink = {
 export type OpenGalleryQuickLink = {
   kind: "openGallery";
   hint?: string;
+  shareAfterPick?: boolean;
 };
 
 export type QuickLink =
@@ -243,6 +244,7 @@ export const guides: Guide[] = [
     quickLinks: [
       {
         kind: "openGallery",
+        shareAfterPick: true,
         hint: "Телефон откроет выбор фото. Выберите снимок, затем используйте «Поделиться» в галерее или приложении «Фото».",
       },
       {

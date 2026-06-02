@@ -87,6 +87,7 @@ export default async function GuidePage({ params }: PageProps) {
               <OpenGalleryButton
                 key={`open-gallery-${index}`}
                 hint={link.hint}
+                shareAfterPick={link.shareAfterPick}
               />
             ) : (
               <QuickLinkButton key={link.label + link.href} link={link} />
