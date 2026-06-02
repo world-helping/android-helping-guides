@@ -11,6 +11,7 @@ type OpenGalleryButtonProps = {
 type SelectedImagePreview = {
   url: string;
   name: string;
+  file: File;
 };
 
 export function OpenGalleryButton({
@@ -19,12 +20,42 @@ export function OpenGalleryButton({
 }: OpenGalleryButtonProps) {
   const inputId = useId();
   const [preview, setPreview] = useState<SelectedImagePreview | null>(null);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview.url);
     };
   }, [preview]);
+
+  const handleShare = async () => {
+    if (!preview) return;
+
+    const shareData: ShareData = {
+      title: preview.name,
+      files: [preview.file],
+    };
+
+    if (!navigator.share || !navigator.canShare?.(shareData)) {
+      setShareMessage(
+        "Если меню «Поделиться» не открылось, откройте выбранное фото в «Галерее» или «Фото» и нажмите «Поделиться».",
+      );
+      return;
+    }
+
+    try {
+      await navigator.share(shareData);
+      setShareMessage(null);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      setShareMessage(
+        "Не получилось открыть меню «Поделиться». Попробуйте открыть фото в «Галерее» или «Фото».",
+      );
+    }
+  };
 
   return (
     <div className="rounded-xl border-2 border-border bg-card p-4">
@@ -43,11 +74,13 @@ export function OpenGalleryButton({
           }}
           onChange={(event) => {
             const file = event.currentTarget.files?.[0] ?? null;
+            setShareMessage(null);
             setPreview(
               file
                 ? {
                     url: URL.createObjectURL(file),
                     name: file.name || "Выбранное фото",
+                    file,
                   }
                 : null,
             );
@@ -67,6 +100,18 @@ export function OpenGalleryButton({
           <p className="border-t border-border px-3 py-2 text-base text-muted">
             Выбрано: {preview.name}
           </p>
+          <div className="border-t border-border p-3">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="flex min-h-13 w-full items-center justify-center rounded-xl bg-accent px-4 py-4 text-center text-lg font-bold text-white transition hover:bg-accent-hover focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Поделиться фото
+            </button>
+            {shareMessage ? (
+              <p className="mt-3 text-base text-muted">{shareMessage}</p>
+            ) : null}
+          </div>
         </div>
       ) : null}
       {hint ? <p className="mt-3 text-base text-muted">{hint}</p> : null}
