@@ -64,8 +64,8 @@ export default async function GuidePage({ params }: PageProps) {
           Быстрые ссылки
         </h2>
         <p className="mb-4 text-lg text-[var(--muted)]">
-          Нажмите кнопку — телефон попробует открыть нужное приложение. Если
-          ничего не произошло, выполните шаги ниже вручную.
+          Здесь собраны быстрые действия и подсказки для этого гайда. Если
+          действие недоступно, выполните шаги ниже вручную.
         </p>
         <div className="flex flex-col gap-4">
           {guide.quickLinks.map((link, index) =>
@@ -86,8 +86,8 @@ export default async function GuidePage({ params }: PageProps) {
             ) : "kind" in link && link.kind === "openGallery" ? (
               <OpenGalleryButton
                 key={`open-gallery-${index}`}
+                label={link.label}
                 hint={link.hint}
-                shareAfterPick={link.shareAfterPick}
               />
             ) : (
               <QuickLinkButton key={link.label + link.href} link={link} />

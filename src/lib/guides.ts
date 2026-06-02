@@ -26,8 +26,8 @@ export type OpenCameraQuickLink = {
 
 export type OpenGalleryQuickLink = {
   kind: "openGallery";
+  label?: string;
   hint?: string;
-  shareAfterPick?: boolean;
 };
 
 export type QuickLink =
@@ -64,9 +64,6 @@ export type Guide = {
   tips?: string[];
   quickLinks: QuickLink[];
 };
-
-const createContactHref =
-  "intent://#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/raw_contact;end";
 
 export const guides: Guide[] = [
   {
@@ -244,8 +241,8 @@ export const guides: Guide[] = [
     quickLinks: [
       {
         kind: "openGallery",
-        shareAfterPick: true,
-        hint: "Выберите снимок, затем нажмите «Поделиться фото». Если меню не открылось, откройте снимок в «Галерее» или «Фото» и нажмите «Поделиться» там.",
+        label: "Выбрать фото из галереи",
+        hint: "После выбора фото оно появится здесь. Дальше выполните шаги ниже: откройте снимок в «Галерее» или «Фото» и нажмите «Поделиться».",
       },
       {
         kind: "openSms",
@@ -385,11 +382,6 @@ export const guides: Guide[] = [
         kind: "openContacts",
         hint: "Если не открылось — найдите приложение «Контакты» на главном экране.",
       },
-      {
-        label: "Создать новый контакт",
-        href: createContactHref,
-        hint: "Сразу откроется форма нового контакта на многих телефонах.",
-      },
     ],
   },
   {
@@ -443,12 +435,7 @@ export const guides: Guide[] = [
       "Удаляется только запись в телефоне — у собеседника ваш номер останется.",
       "На некоторых телефонах: удерживайте контакт в списке 1–2 секунды → «Удалить».",
     ],
-    quickLinks: [
-      {
-        kind: "openContacts",
-        hint: "Дальше найдите контакт и удалите по шагам выше.",
-      },
-    ],
+    quickLinks: [],
   },
   {
     slug: "share-number",
@@ -502,10 +489,6 @@ export const guides: Guide[] = [
       "Можно продиктовать номер по телефону, если пересылка через приложение неудобна.",
     ],
     quickLinks: [
-      {
-        kind: "openContacts",
-        hint: "Выберите контакт → «Поделиться».",
-      },
       {
         kind: "newSms",
         hint: "Если копировали номер — вставьте его в новое сообщение.",
@@ -567,10 +550,6 @@ export const guides: Guide[] = [
       {
         kind: "openSms",
         hint: "Если не открылось — найдите «Сообщения» на главном экране.",
-      },
-      {
-        kind: "newSms",
-        hint: "Откроется создание нового сообщения.",
       },
     ],
   },

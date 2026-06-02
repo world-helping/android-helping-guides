@@ -1,59 +1,30 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useId, useState } from "react";
 
 type OpenGalleryButtonProps = {
+  label?: string;
   hint?: string;
-  shareAfterPick?: boolean;
+};
+
+type SelectedImagePreview = {
+  url: string;
+  name: string;
 };
 
 export function OpenGalleryButton({
+  label = "Открыть галерею",
   hint,
-  shareAfterPick = false,
 }: OpenGalleryButtonProps) {
   const inputId = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [preview, setPreview] = useState<SelectedImagePreview | null>(null);
 
-  async function shareSelectedFile() {
-    if (!selectedFile) {
-      setStatus("Сначала выберите фото, затем нажмите «Поделиться выбранным фото».");
-      inputRef.current?.click();
-      return;
-    }
-
-    const shareData: ShareData = {
-      files: [selectedFile],
-      title: "Фотография",
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview.url);
     };
-
-    if (!navigator.share) {
-      setStatus(
-        "Этот браузер не может открыть меню «Поделиться». Откройте фото в «Галерее» или «Фото» и нажмите «Поделиться».",
-      );
-      return;
-    }
-
-    if (navigator.canShare && !navigator.canShare(shareData)) {
-      setStatus(
-        "Этот браузер не может поделиться выбранным фото. Откройте фото в «Галерее» или «Фото» и нажмите «Поделиться».",
-      );
-      return;
-    }
-
-    try {
-      await navigator.share(shareData);
-      setStatus("Открылось меню «Поделиться».");
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        setStatus("Отправка отменена.");
-        return;
-      }
-
-      setStatus("Не удалось открыть меню «Поделиться». Попробуйте выбрать фото ещё раз.");
-    }
-  }
+  }, [preview]);
 
   return (
     <div className="rounded-xl border-2 border-border bg-card p-4">
@@ -61,10 +32,9 @@ export function OpenGalleryButton({
         htmlFor={inputId}
         className="flex min-h-13 w-full cursor-pointer items-center justify-center rounded-xl bg-accent px-4 py-4 text-center text-lg font-bold text-white no-underline transition hover:bg-accent-hover focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-accent"
       >
-        {shareAfterPick ? "Выбрать фото из галереи" : "Открыть галерею"}
+        {label}
         <input
           id={inputId}
-          ref={inputRef}
           type="file"
           accept="image/*"
           className="sr-only"
@@ -73,33 +43,33 @@ export function OpenGalleryButton({
           }}
           onChange={(event) => {
             const file = event.currentTarget.files?.[0] ?? null;
-            setSelectedFile(file);
-            setStatus(
-              file && shareAfterPick
-                ? "Фото выбрано. Теперь нажмите «Поделиться выбранным фото»."
+            setPreview(
+              file
+                ? {
+                    url: URL.createObjectURL(file),
+                    name: file.name || "Выбранное фото",
+                  }
                 : null,
             );
           }}
         />
       </label>
-      {shareAfterPick ? (
-        <button
-          type="button"
-          className="mt-3 flex min-h-13 w-full items-center justify-center rounded-xl border-2 border-accent bg-card px-4 py-4 text-center text-lg font-bold text-accent transition hover:bg-accent/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          onClick={shareSelectedFile}
-        >
-          {selectedFile ? "Поделиться выбранным фото" : "Поделиться фото"}
-        </button>
-      ) : null}
-      {shareAfterPick && selectedFile ? (
-        <p className="mt-3 text-base text-muted">Выбрано: {selectedFile.name}</p>
+      {preview ? (
+        <div className="mt-4 overflow-hidden rounded-xl border-2 border-border bg-background">
+          <Image
+            src={preview.url}
+            alt={preview.name}
+            width={640}
+            height={480}
+            unoptimized
+            className="max-h-80 w-full object-contain"
+          />
+          <p className="border-t border-border px-3 py-2 text-base text-muted">
+            Выбрано: {preview.name}
+          </p>
+        </div>
       ) : null}
       {hint ? <p className="mt-3 text-base text-muted">{hint}</p> : null}
-      {status ? (
-        <p className="mt-3 text-base text-muted" aria-live="polite">
-          {status}
-        </p>
-      ) : null}
     </div>
   );
 }
