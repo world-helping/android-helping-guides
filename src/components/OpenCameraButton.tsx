@@ -1,15 +1,24 @@
-import { QuickLinkButton } from "@/components/QuickLinkButton";
-import type { AppQuickLink } from "@/lib/guides";
-
-const openCameraLink: AppQuickLink = {
-  label: "Открыть камеру",
-  href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_CAMERA;end",
-};
-
 type OpenCameraButtonProps = {
   hint?: string;
 };
 
 export function OpenCameraButton({ hint }: OpenCameraButtonProps) {
-  return <QuickLinkButton link={{ ...openCameraLink, hint }} />;
+  return (
+    <div className="rounded-xl border-2 border-border bg-card p-4">
+      <label
+        htmlFor="open-camera-input"
+        className="flex min-h-13 w-full cursor-pointer items-center justify-center rounded-xl bg-accent px-4 py-4 text-center text-lg font-bold text-white no-underline transition hover:bg-accent-hover focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-accent"
+      >
+        Открыть камеру
+        <input
+          id="open-camera-input"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="sr-only"
+        />
+      </label>
+      {hint ? <p className="mt-3 text-base text-muted">{hint}</p> : null}
+    </div>
+  );
 }

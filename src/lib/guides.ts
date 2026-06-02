@@ -181,11 +181,11 @@ export const guides: Guide[] = [
     quickLinks: [
       {
         kind: "openCamera",
-        hint: "Откроется приложение «Камера». Если не открылось — найдите «Камера» на главном экране.",
+        hint: "Телефон попробует открыть камеру для съёмки. Если не открылось — найдите «Камера» на главном экране.",
       },
       {
         kind: "openGallery",
-        hint: "Просмотр уже сделанных снимков.",
+        hint: "Телефон откроет выбор фото из галереи или приложения «Фото».",
       },
     ],
   },
@@ -197,12 +197,6 @@ export const guides: Guide[] = [
     steps: [
       {
         text: "Откройте «Галерея» или «Фото» и выберите нужный снимок.",
-        textLinks: [
-          {
-            match: "«Галерея»",
-            href: "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_GALLERY;end",
-          },
-        ],
         image: {
           src: "/guides/send-photo/step-1-gallery-photo.png",
           alt: "Выбор снимка в приложении «Галерея»",
@@ -249,7 +243,7 @@ export const guides: Guide[] = [
     quickLinks: [
       {
         kind: "openGallery",
-        hint: "Выберите фото, затем «Поделиться».",
+        hint: "Телефон откроет выбор фото. Выберите снимок, затем используйте «Поделиться» в галерее или приложении «Фото».",
       },
       {
         kind: "openSms",
