@@ -60,6 +60,13 @@ export type Guide = {
   title: string;
   shortDescription: string;
   icon: string;
+  iconSrc?: string;
+  /** Скрыть из общего списка на главной (доступен по прямой ссылке). */
+  listInCatalog?: boolean;
+  /** Показать в меню вложенным пунктом под родительским гайдом. */
+  parentSlug?: string;
+  /** Slug связанных гайдов — ссылки показываются только внутри этого гайда. */
+  relatedGuides?: string[];
   steps: GuideStep[];
   tips?: string[];
   quickLinks: QuickLink[];
@@ -242,11 +249,134 @@ export const guides: Guide[] = [
       {
         kind: "openGallery",
         label: "Выбрать фото из галереи",
-        hint: "После выбора фото оно появится здесь. Дальше выполните шаги ниже: откройте снимок в «Галерее» или «Фото» и нажмите «Поделиться».",
+        hint: "После выбора появятся миниатюры и кнопки Telegram, MAX или «Другие приложения». Если удобнее — выполните шаги ниже вручную через «Галерею».",
       },
       {
         kind: "openSms",
         hint: "Если не открылось — найдите приложение «Сообщения» на главном экране.",
+      },
+    ],
+    relatedGuides: ["send-photo-telegram", "send-photo-max"],
+  },
+  {
+    slug: "send-photo-telegram",
+    title: "Как отправить фотографию в Telegram?",
+    shortDescription: "Отправить снимок через мессенджер Telegram",
+    icon: "✈️",
+    iconSrc: "/icons/telegram-icon.png",
+    listInCatalog: false,
+    steps: [
+      {
+        text: "На главном экране найдите и откройте приложение Telegram (синий значок с самолётиком).",
+        image: {
+          src: "/guides/send-photo-telegram/step-1-telegram-icon.png",
+          alt: "Иконка приложения Telegram на главном экране Android",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Выберите чат с человеком, кому хотите отправить фото.",
+        image: {
+          src: "/guides/send-photo-telegram/step-2-open-chat.png",
+          alt: "Список чатов в Telegram",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Нажмите значок скрепки 📎 внизу экрана (слева от поля ввода сообщения).",
+        image: {
+          src: "/guides/send-photo-telegram/step-3-attach-button.png",
+          alt: "Кнопка прикрепления файла в чате Telegram",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Выберите «Галерея» или «Фото» и укажите нужный снимок.",
+        image: {
+          src: "/guides/send-photo-telegram/step-4-gallery-pick.png",
+          alt: "Выбор фото из галереи в Telegram",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Нажмите «Отправить» (синий самолётик ✈ справа внизу).",
+        image: {
+          src: "/guides/send-photo-telegram/step-5-send.png",
+          alt: "Кнопка отправки фото в чате Telegram",
+          variant: "screenshot",
+        },
+      },
+    ],
+    tips: [
+      "Можно отправить фото через «Поделиться» из галереи — выберите Telegram в списке приложений.",
+      "Если Telegram нет на телефоне — установите его из Google Play.",
+    ],
+    quickLinks: [
+      {
+        kind: "openGallery",
+        label: "Выбрать фото из галереи",
+        hint: "После выбора нажмите кнопку Telegram — откроется список чатов для отправки.",
+      },
+    ],
+  },
+  {
+    slug: "send-photo-max",
+    title: "Как отправить фотографию в MAX?",
+    shortDescription: "Отправить снимок через мессенджер MAX",
+    icon: "💬",
+    iconSrc: "/icons/max-icon.png",
+    parentSlug: "send-photo",
+    steps: [
+      {
+        text: "На главном экране найдите и откройте приложение MAX (фиолетово-синий значок).",
+        image: {
+          src: "/guides/send-photo-max/step-1-max-icon.png",
+          alt: "Иконка приложения MAX на главном экране Android",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Выберите чат с человеком, кому хотите отправить фото.",
+        image: {
+          src: "/guides/send-photo-max/step-2-open-chat.png",
+          alt: "Список чатов в MAX",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Нажмите значок «+» или скрепки 📎 внизу экрана (слева от поля ввода).",
+        image: {
+          src: "/guides/send-photo-max/step-3-attach-button.png",
+          alt: "Кнопка прикрепления файла в чате MAX",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Выберите «Галерея» или «Фото» и укажите нужный снимок.",
+        image: {
+          src: "/guides/send-photo-max/step-4-gallery-pick.png",
+          alt: "Выбор фото из галереи в MAX",
+          variant: "screenshot",
+        },
+      },
+      {
+        text: "Нажмите «Отправить» (стрелка или кнопка справа внизу).",
+        image: {
+          src: "/guides/send-photo-max/step-5-send.png",
+          alt: "Кнопка отправки фото в чате MAX",
+          variant: "screenshot",
+        },
+      },
+    ],
+    tips: [
+      "Можно отправить фото через «Поделиться» из галереи — выберите MAX в списке приложений.",
+      "Если MAX нет на телефоне — установите его из Google Play.",
+    ],
+    quickLinks: [
+      {
+        kind: "openGallery",
+        label: "Выбрать фото из галереи",
+        hint: "После выбора нажмите кнопку MAX — откроется список чатов для отправки.",
       },
     ],
   },
@@ -615,4 +745,14 @@ export const guides: Guide[] = [
 
 export function getGuideBySlug(slug: string): Guide | undefined {
   return guides.find((g) => g.slug === slug);
+}
+
+export function getCatalogGuides(): Guide[] {
+  return guides.filter((g) => g.listInCatalog !== false && !g.parentSlug);
+}
+
+export function getSubGuides(parentSlug: string): Guide[] {
+  return guides.filter(
+    (g) => g.parentSlug === parentSlug && g.listInCatalog !== false,
+  );
 }

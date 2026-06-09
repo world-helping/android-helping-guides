@@ -9,6 +9,8 @@ const PRECACHE_URLS = [
   "/guides/blacklist",
   "/guides/take-photo",
   "/guides/send-photo",
+  "/guides/send-photo-telegram",
+  "/guides/send-photo-max",
   "/guides/balance",
   "/guides/add-contact",
   "/guides/delete-contact",

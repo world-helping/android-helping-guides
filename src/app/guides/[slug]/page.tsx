@@ -4,7 +4,9 @@ import { OpenCameraButton } from "@/components/OpenCameraButton";
 import { OpenContactsButton } from "@/components/OpenContactsButton";
 import { OpenGalleryButton } from "@/components/OpenGalleryButton";
 import { NewSmsButton, OpenSmsButton } from "@/components/OpenMessagesButton";
+import { GuideIcon } from "@/components/GuideIcon";
 import { QuickLinkButton } from "@/components/QuickLinkButton";
+import { RelatedGuideLinks } from "@/components/RelatedGuideLinks";
 import { StepList } from "@/components/StepList";
 import { getGuideBySlug, guides } from "@/lib/guides";
 
@@ -43,9 +45,7 @@ export default async function GuidePage({ params }: PageProps) {
       </nav>
 
       <header className="flex items-start gap-4">
-        <span className="text-5xl" aria-hidden>
-          {guide.icon}
-        </span>
+        <GuideIcon guide={guide} size="header" />
         <div>
           <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
             {guide.title}
@@ -123,6 +123,10 @@ export default async function GuidePage({ params }: PageProps) {
             ))}
           </ul>
         </section>
+      ) : null}
+
+      {guide.relatedGuides && guide.relatedGuides.length > 0 ? (
+        <RelatedGuideLinks slugs={guide.relatedGuides} />
       ) : null}
     </article>
   );

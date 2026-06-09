@@ -9,6 +9,7 @@ import {
 import type { RootStackParamList } from "./navigation";
 import { GuideScreen } from "./screens/GuideScreen";
 import { HomeScreen } from "./screens/HomeScreen";
+import { SendPhotoScreen } from "./screens/SendPhotoScreen";
 import { colors } from "./theme";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,6 +41,7 @@ export default function App() {
           }}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="SendPhoto" component={SendPhotoScreen} />
           <Stack.Screen
             name="Guide"
             component={GuideScreen}

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import type { QuickLink } from '../lib/guides';
 import { savePhotoToGallery, sharePhotosToApp } from '../lib/photoActions';
+import { openNewSms, openSmsInbox } from '../lib/smsActions';
 import { colors } from '../theme';
 
 type QuickLinksProps = {
@@ -22,6 +23,22 @@ type SelectedPhotosState = {
   selectedUris: string[];
   setSelectedUris: (uris: string[]) => void;
 };
+
+const PHOTO_QUICK_LINK_KINDS = new Set(['openCamera', 'openGallery']);
+
+function isPhotoQuickLink(link: QuickLink): boolean {
+  return 'kind' in link && PHOTO_QUICK_LINK_KINDS.has(link.kind);
+}
+
+function lastPhotoQuickLinkIndex(links: QuickLink[]): number {
+  let lastIndex = -1;
+  links.forEach((link, index) => {
+    if (isPhotoQuickLink(link)) {
+      lastIndex = index;
+    }
+  });
+  return lastIndex;
+}
 
 function addUniqueUris(existing: string[], incoming: string[]): string[] {
   return [...incoming, ...existing].filter(
@@ -133,6 +150,7 @@ function SelectedPhotosPanel({
 
 export function QuickLinks({ links }: QuickLinksProps) {
   const [selectedUris, setSelectedUris] = useState<string[]>([]);
+  const sharePanelAfterIndex = lastPhotoQuickLinkIndex(links);
 
   if (links.length === 0) {
     return null;
@@ -141,17 +159,20 @@ export function QuickLinks({ links }: QuickLinksProps) {
   return (
     <View style={styles.list}>
       {links.map((link, index) => (
-        <QuickLinkItem
-          key={index}
-          link={link}
-          selectedUris={selectedUris}
-          setSelectedUris={setSelectedUris}
-        />
+        <View key={index} style={styles.linkGroup}>
+          <QuickLinkItem
+            link={link}
+            selectedUris={selectedUris}
+            setSelectedUris={setSelectedUris}
+          />
+          {index === sharePanelAfterIndex && selectedUris.length > 0 ? (
+            <SelectedPhotosPanel
+              uris={selectedUris}
+              onClear={() => setSelectedUris([])}
+            />
+          ) : null}
+        </View>
       ))}
-      <SelectedPhotosPanel
-        uris={selectedUris}
-        onClear={() => setSelectedUris([])}
-      />
     </View>
   );
 }
@@ -170,7 +191,7 @@ function QuickLinkItem({
           <ActionCard
             label="Открыть сообщения (SMS)"
             hint={link.hint}
-            onPress={() => Linking.openURL('sms:')}
+            onPress={() => openSmsInbox()}
           />
         );
       case 'newSms':
@@ -178,7 +199,7 @@ function QuickLinkItem({
           <ActionCard
             label="Новое SMS"
             hint={link.hint}
-            onPress={() => Linking.openURL('sms:')}
+            onPress={() => openNewSms()}
           />
         );
       case 'openCamera':
@@ -290,11 +311,19 @@ function OpenCameraCard({
       const saveResult = await savePhotoToGallery(uri);
       if (saveResult.success) {
         setStatusMessage({
-          text: 'Фото сохранено в галерею',
+          text: 'Фото сохранено в галерею — ниже выберите, куда отправить',
           kind: 'success',
         });
       } else if (saveResult.code === 'expo-go') {
-        setStatusMessage({ text: saveResult.message, kind: 'info' });
+        setStatusMessage({
+          text: `${saveResult.message} Ниже можно отправить фото.`,
+          kind: 'info',
+        });
+      } else {
+        setStatusMessage({
+          text: 'Фото добавлено — ниже выберите, куда отправить',
+          kind: 'success',
+        });
       }
     } catch (error) {
       Alert.alert(
@@ -340,7 +369,14 @@ function OpenGalleryCard({
   label?: string;
   hint?: string;
 } & SelectedPhotosState) {
+  const [statusMessage, setStatusMessage] = useState<{
+    text: string;
+    kind: 'success' | 'info';
+  } | null>(null);
+
   const openGallery = async () => {
+    setStatusMessage(null);
+
     try {
       const permission =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -359,14 +395,21 @@ function OpenGalleryCard({
         quality: 0.8,
       });
 
-      if (!result.canceled && result.assets.length > 0) {
-        setSelectedUris(
-          addUniqueUris(
-            selectedUris,
-            result.assets.map((asset) => asset.uri),
-          ),
-        );
+      if (result.canceled || result.assets.length === 0) {
+        return;
       }
+
+      const pickedUris = result.assets.map((asset) => asset.uri);
+      setSelectedUris(addUniqueUris(selectedUris, pickedUris));
+
+      const count = pickedUris.length;
+      setStatusMessage({
+        text:
+          count === 1
+            ? 'Фото выбрано — ниже выберите, куда отправить'
+            : `Выбрано фото: ${count} — ниже выберите, куда отправить`,
+        kind: 'success',
+      });
     } catch (error) {
       Alert.alert(
         'Ошибка галереи',
@@ -386,6 +429,17 @@ function OpenGalleryCard({
       >
         <Text style={styles.buttonText}>{label}</Text>
       </Pressable>
+      {statusMessage ? (
+        <Text
+          style={
+            statusMessage.kind === 'success'
+              ? styles.successMessage
+              : styles.infoMessage
+          }
+        >
+          {statusMessage.text}
+        </Text>
+      ) : null}
       {hint ? <Text style={styles.hint}>{hint}</Text> : null}
     </View>
   );
@@ -393,6 +447,9 @@ function OpenGalleryCard({
 
 const styles = StyleSheet.create({
   list: {
+    gap: 16,
+  },
+  linkGroup: {
     gap: 16,
   },
   card: {

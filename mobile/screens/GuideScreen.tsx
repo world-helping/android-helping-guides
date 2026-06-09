@@ -1,7 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GuideIcon } from '../components/GuideIcon';
 import { QuickLinks } from '../components/QuickLinks';
+import { RelatedGuideLinks } from '../components/RelatedGuideLinks';
 import { StepList } from '../components/StepList';
 import { getGuideBySlug } from '../lib/guides';
 import type { RootStackParamList } from '../navigation';
@@ -39,9 +41,7 @@ export function GuideScreen({ navigation, route }: Props) {
         </Pressable>
 
         <View style={styles.header}>
-          <Text style={styles.icon} accessibilityElementsHidden>
-            {guide.icon}
-          </Text>
+          <GuideIcon guide={guide} size="header" />
           <View style={styles.headerText}>
             <Text style={styles.title}>{guide.title}</Text>
             <Text style={styles.description}>{guide.shortDescription}</Text>
@@ -75,6 +75,15 @@ export function GuideScreen({ navigation, route }: Props) {
             ))}
           </View>
         ) : null}
+
+        {guide.relatedGuides && guide.relatedGuides.length > 0 ? (
+          <RelatedGuideLinks
+            slugs={guide.relatedGuides}
+            onPress={(relatedSlug) =>
+              navigation.navigate('Guide', { slug: relatedSlug })
+            }
+          />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -104,10 +113,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 16,
-  },
-  icon: {
-    fontSize: 48,
-    lineHeight: 52,
   },
   headerText: {
     flex: 1,

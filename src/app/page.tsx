@@ -1,5 +1,5 @@
 import { GuideCard } from "@/components/GuideCard";
-import { guides } from "@/lib/guides";
+import { getCatalogGuides, getSubGuides } from "@/lib/guides";
 
 export default function HomePage() {
   return (
@@ -19,9 +19,12 @@ export default function HomePage() {
           Все гайды
         </h2>
         <ul className="flex list-none flex-col gap-4 p-0">
-          {guides.map((guide) => (
-            <li key={guide.slug}>
+          {getCatalogGuides().map((guide) => (
+            <li key={guide.slug} className="flex flex-col gap-3">
               <GuideCard guide={guide} />
+              {getSubGuides(guide.slug).map((subGuide) => (
+                <GuideCard key={subGuide.slug} guide={subGuide} nested />
+              ))}
             </li>
           ))}
         </ul>
